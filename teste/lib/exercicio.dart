@@ -42,7 +42,7 @@ abstract class ImpressaoNaTela {
   void imprimirIngredientesNatela();
 }
 
-class BoloLaranja extends Bolo implements ImpressaoNaTela {
+class BoloLaranja extends Bolo with ImprimirDesconto implements ImpressaoNaTela {
   int qntLaranjas;
   String laranjas;
 
@@ -65,4 +65,5 @@ void main() {
   Bolo.imprimirBorda();
   print('${bolo2.qntIngredienteSecreto}'); 
   Bolo.imprimirBorda();
+  bolo2.imprimirDesconto();
 }
