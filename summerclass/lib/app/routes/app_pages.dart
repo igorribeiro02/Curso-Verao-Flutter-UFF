@@ -1,5 +1,7 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:summerclass/app/modules/dashboard/bidings/home_bindings.dart';
+import 'package:summerclass/app/modules/movies/bidings/movies_bindings.dart';
+import 'package:summerclass/app/modules/movies/ui/movie_form.dart';
 import 'package:summerclass/app/modules/splash/bindings/splash_bindings.dart';
 import 'package:summerclass/app/modules/dashboard/ui/home_page.dart';
 import 'package:summerclass/app/modules/ui/splash_page.dart';
@@ -18,5 +20,8 @@ abstract class AppPages {
       page: () => HomePage(),
       binding: HomePageBindings(),
     ),
+
+    GetPage(name: Routes.MOVIE_FORM, page: () => MovieForm(),
+    binding: MoviesBindings())
   ];
 }
