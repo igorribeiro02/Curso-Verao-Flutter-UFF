@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:summerclass/app/modules/movies/controller/movies_controller.dart';
 
@@ -29,11 +30,53 @@ class MovieForm extends GetView<MoviesController> {
                 ),
                 SizedBox(height: 12),
 
+                TextFormField(
+                  decoration: InputDecoration(labelText: "Descrição do Filme"),
+                  textInputAction: TextInputAction.next,
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? "Campo obrigatório"
+                      : null,
+                  onSaved: (v) =>
+                      controller.movieForm['Description'] = v?.trim() ?? '',
+                ),
+                SizedBox(height: 12),
+                TextFormField(
+                  decoration: InputDecoration(labelText: "Diretor do Filme"),
+                  textInputAction: TextInputAction.next,
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? "Campo obrigatório"
+                      : null,
+                  onSaved: (v) =>
+                      controller.movieForm['directors'] = v?.trim() ?? '',
+                ),
+                SizedBox(height: 12),
+                TextFormField(
+                  decoration: InputDecoration(labelText: "Sinopse do Filme"),
+                  textInputAction: TextInputAction.next,
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? "Campo obrigatório"
+                      : null,
+                  onSaved: (v) =>
+                      controller.movieForm['synopsis'] = v?.trim() ?? '',
+                ),
+                SizedBox(height: 12),
                 ElevatedButton(
-                  onPressed: (){
-                    final FormState
+                  onPressed: () {
+                    final formState = _formKey.currentState;
+                    if (formState != null && formState.validate()) {
+                      formState.save();
+                      print(controller.movieForm);
+                      controller.imageNotifier.value = null;
+                      Get.back();
+                      Get.snackbar('Sucesso', 'Filme adicionado com sucesso!', snackPosition: SnackPosition.BOTTOM
+                      );
+                    } else{
+                      Get.snackbar('Erro', 'Por favor, preencha todos os campos corretamente.', snackPosition: SnackPosition.BOTTOM
+                      );
+                    }
                   },
-                )
+                  child: Text("Salvar"),
+                ),
               ],
             ),
           ),

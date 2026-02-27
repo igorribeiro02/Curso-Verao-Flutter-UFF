@@ -15,4 +15,6 @@ class MoviesController extends GetxController {
     'synopsis' : '',
     'images' : '',
   };
+
+  get imageNotifier => null;
 }
