@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'dart:nativewrappers/_internal/vm/bin/common_patch.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:summerclass/app/modules/movies/controller/movies_controller.dart';
 
 class MovieForm extends GetView<MoviesController> {
@@ -60,18 +64,82 @@ class MovieForm extends GetView<MoviesController> {
                       controller.movieForm['synopsis'] = v?.trim() ?? '',
                 ),
                 SizedBox(height: 12),
+
+                ValueListenableBuilder<String?>(
+                  valueListenable: controller.imageNotifier,
+                  builder: (context, filePath, _) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Imagem do Filme",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: controller.pickImage,
+                          child: Container(
+                            width: double.infinity,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: filePath == null
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.add_a_photo,
+                                        size: 40,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      const Text(
+                                        "Clique para selecionar uma imagem",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
+                                  )
+                                : ClipRRect(
+                                    // ClipRRect para respeitar o border radius
+                                    borderRadius: BorderRadius.circular(6),
+                                    child: Image.file(
+                                      File(filePath!),
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
                 ElevatedButton(
                   onPressed: () {
                     final formState = _formKey.currentState;
                     if (formState != null && formState.validate()) {
                       formState.save();
+                      controller.imageNotifier.value = null; // Limpa a imagem selecionada após salvar
                       print(controller.movieForm);
                       controller.imageNotifier.value = null;
                       Get.back();
-                      Get.snackbar('Sucesso', 'Filme adicionado com sucesso!', snackPosition: SnackPosition.BOTTOM
+                      Get.snackbar(
+                        'Sucesso',
+                        'Filme adicionado com sucesso!',
+                        snackPosition: SnackPosition.BOTTOM,
                       );
-                    } else{
-                      Get.snackbar('Erro', 'Por favor, preencha todos os campos corretamente.', snackPosition: SnackPosition.BOTTOM
+                    } else {
+                      Get.snackbar(
+                        'Erro',
+                        'Por favor, preencha todos os campos corretamente.',
+                        snackPosition: SnackPosition.BOTTOM,
                       );
                     }
                   },
