@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'dart:nativewrappers/_internal/vm/bin/common_patch.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:summerclass/app/modules/movies/controller/movies_controller.dart';
 
@@ -14,7 +12,7 @@ class MovieForm extends GetView<MoviesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Adicione um Novo filme "), centerTitle: true),
+      appBar: AppBar(title: Text('Adicione um novo filme'), centerTitle: true),
 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -24,10 +22,10 @@ class MovieForm extends GetView<MoviesController> {
             child: Column(
               children: [
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Título do Filme"),
+                  decoration: InputDecoration(labelText: 'Nome do filme'),
                   textInputAction: TextInputAction.next,
                   validator: (v) => (v == null || v.trim().isEmpty)
-                      ? "Campo obrigatório"
+                      ? 'Informe o nome do filme'
                       : null,
                   onSaved: (v) =>
                       controller.movieForm['title'] = v?.trim() ?? '',
@@ -35,86 +33,86 @@ class MovieForm extends GetView<MoviesController> {
                 SizedBox(height: 12),
 
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Descrição do Filme"),
+                  decoration: InputDecoration(labelText: 'Descrição'),
                   textInputAction: TextInputAction.next,
+                  maxLines: 2,
                   validator: (v) => (v == null || v.trim().isEmpty)
-                      ? "Campo obrigatório"
+                      ? 'Informe a descrição'
                       : null,
                   onSaved: (v) =>
-                      controller.movieForm['Description'] = v?.trim() ?? '',
+                      controller.movieForm['description'] = v?.trim() ?? '',
                 ),
                 SizedBox(height: 12),
+
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Diretor do Filme"),
+                  decoration: InputDecoration(labelText: 'Diretores'),
                   textInputAction: TextInputAction.next,
                   validator: (v) => (v == null || v.trim().isEmpty)
-                      ? "Campo obrigatório"
+                      ? 'Informe os diretores'
                       : null,
                   onSaved: (v) =>
                       controller.movieForm['directors'] = v?.trim() ?? '',
                 ),
                 SizedBox(height: 12),
+
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Sinopse do Filme"),
-                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(labelText: 'Sinopse'),
+                  maxLines: 4,
                   validator: (v) => (v == null || v.trim().isEmpty)
-                      ? "Campo obrigatório"
+                      ? 'Informe a sinopse'
                       : null,
                   onSaved: (v) =>
                       controller.movieForm['synopsis'] = v?.trim() ?? '',
                 ),
                 SizedBox(height: 12),
 
-                ValueListenableBuilder<String?>(
+                ValueListenableBuilder<XFile?>(
                   valueListenable: controller.imageNotifier,
-                  builder: (context, filePath, _) {
+                  builder: (context, file, _) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Imagem do Filme",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Text(
+                          'Imagem (opcional)',
+                          style: TextStyle(fontWeight: FontWeight.w600),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         GestureDetector(
                           onTap: controller.pickImage,
                           child: Container(
-                            width: double.infinity,
-                            height: 150,
+                            height: 160,
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: filePath == null
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.add_a_photo,
-                                        size: 40,
-                                        color: Colors.grey,
+                            child: Center(
+                              child: file == null
+                                  ? Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.photo_library,
+                                          size: 40,
+                                          color: Colors.grey,
+                                        ),
+                                        SizedBox(height: 6),
+                                        Text(
+                                          'Toque para escolher uma imagem da galeria',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ],
+                                    )
+                                  : ClipRRect(
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: Image.file(
+                                        File(file.path),
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
                                       ),
-                                      const SizedBox(height: 8),
-                                      const Text(
-                                        "Clique para selecionar uma imagem",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  )
-                                : ClipRRect(
-                                    // ClipRRect para respeitar o border radius
-                                    borderRadius: BorderRadius.circular(6),
-                                    child: Image.file(
-                                      File(filePath!),
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
                                     ),
-                                  ),
+                            ),
                           ),
                         ),
                       ],
@@ -122,28 +120,49 @@ class MovieForm extends GetView<MoviesController> {
                   },
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final formState = _formKey.currentState;
-                    if (formState != null && formState.validate()) {
-                      formState.save();
-                      controller.imageNotifier.value = null; // Limpa a imagem selecionada após salvar
-                      print(controller.movieForm);
-                      controller.imageNotifier.value = null;
-                      Get.back();
-                      Get.snackbar(
-                        'Sucesso',
-                        'Filme adicionado com sucesso!',
-                        snackPosition: SnackPosition.BOTTOM,
+                    
+                    if (formState == null || !formState.validate()) {
+                      Get.showSnackbar(
+                        GetSnackBar(
+                          title: 'Erro',
+                          message: 'Preencha os campos obrigatórios',
+                          duration: Duration(seconds: 2),
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                        ),
                       );
-                    } else {
-                      Get.snackbar(
-                        'Erro',
-                        'Por favor, preencha todos os campos corretamente.',
-                        snackPosition: SnackPosition.BOTTOM,
+                      return;
+                    }
+                    
+                    formState.save();
+                    try {
+                      await controller.saveMovie();
+                      controller.imageNotifier.value = null;
+                      formState.reset();
+                      Get.showSnackbar(
+                        GetSnackBar(
+                          title: 'Sucesso',
+                          message: 'Filme adicionado com sucesso!',
+                          duration: Duration(seconds: 3),
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } catch (e) {
+                      Get.showSnackbar(
+                        GetSnackBar(
+                          title: 'Erro',
+                          message: e.toString().replaceFirst('Exception: ', ''),
+                          duration: Duration(seconds: 3),
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                        ),
                       );
                     }
                   },
-                  child: Text("Salvar"),
+                  child: Text('Salvar'),
                 ),
               ],
             ),

@@ -5,6 +5,7 @@ class Movie {
   final String directors;
   final String synopsis;
   final String? imageBase64;
+  final String createdBy;
 
   Movie({
     this.id,
@@ -12,6 +13,7 @@ class Movie {
     required this.description,
     required this.directors,
     required this.synopsis,
+    required this.createdBy,
     this.imageBase64,
   });
 
@@ -23,8 +25,10 @@ class Movie {
       'directors': directors,
       'synopsis': synopsis,
       'imageBase64': imageBase64,
+      'created_by': createdBy
     };
   }
+
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       id: json['id'] as String?,
@@ -33,6 +37,7 @@ class Movie {
       directors: json['directors'] as String? ?? '',
       synopsis: json['synopsis'] as String? ?? '',
       imageBase64: json['imageBase64'] as String?,
+      createdBy: json['created_by' as String? ?? ""]
     );
   }
 }

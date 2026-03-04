@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:summerclass/app/modules/movies/model/movie.dart';
+import 'package:summerclass/app/modules/movies/data/model/movie_model.dart';
 
 class MovieProvider {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:summerclass/app/routes/app_routes.dart';
 
 class SplashController extends GetxController {
+  final auth = FirebaseAuth.instance;
+
   SplashController();
 
-  RxBool isLoading = true.obs;
+  RxBool isLoading = false.obs;
+  bool isSignedIn = false;
 
   @override
   void onInit() {
@@ -14,18 +18,25 @@ class SplashController extends GetxController {
 
   void _loadData() async {
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 3)); // simula uma operação de carregamento
+    isSignedIn = _isLoggedIn();
+    await Future.delayed(const Duration(seconds: 5));
     isLoading.value = false;
-      finishLoading();
+    finishLoading();
   }
 
-  goToHomePage(){
-    Get.toNamed(Routes.HOME);
+  bool _isLoggedIn() {
+    return auth.currentUser != null;
+  }
+
+  void goToInitialPage() {
+    if (!isSignedIn) {
+      Get.offAllNamed(Routes.LOGIN);
+    } else {
+      Get.offAllNamed(Routes.HOME);
+    }
   }
 
   void finishLoading() {
-    Future.microtask(() => goToHomePage());
+    Future.microtask(goToInitialPage);
   }
-
 }
-

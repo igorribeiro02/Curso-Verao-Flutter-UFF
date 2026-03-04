@@ -1,5 +1,7 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:summerclass/app/modules/dashboard/bidings/home_bindings.dart';
+import 'package:summerclass/app/modules/login/bindings/login_bindings.dart';
+import 'package:summerclass/app/modules/login/ui/login_page.dart';
 import 'package:summerclass/app/modules/movies/bidings/movies_bindings.dart';
 import 'package:summerclass/app/modules/movies/ui/movie_form.dart';
 import 'package:summerclass/app/modules/splash/bindings/splash_bindings.dart';
@@ -14,6 +16,9 @@ abstract class AppPages {
       page: () => const SplashPage(),
       binding: SplashBindings(),
     ),
+
+    GetPage(name: Routes.LOGIN, page: () => LoginPage(),
+    binding: LoginBindings()),
 
     GetPage(
       name: Routes.HOME,
